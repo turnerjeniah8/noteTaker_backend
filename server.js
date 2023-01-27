@@ -39,7 +39,7 @@ app.route("/notes")
 //I want to give the id a random ID
 //then I want to assign that into a newNote variable
 //after that I am going to push the new note and rewrite the db.json file
-app.post("api/notes", function (req, res) {
+app.post("/api/notes", function (req, res) {
   req.body.id = randomUUID();
   const newNote = req.body;
 
@@ -61,7 +61,13 @@ app.delete("/api/notes/:id", function (req, res) {
   res.json(database);
 })
 
-
+//updates the json file whenever a note is added or deleted
+        function updateDatabase() {
+            fs.writeFile("db/db.json",JSON.stringify(notes,'\t'),err => {
+                if (err) throw err;
+                return true;
+            });
+        }
 // GET Route for note page
 app.get('*', function (req, res) {
     //we want to send this information to the public index html page.
