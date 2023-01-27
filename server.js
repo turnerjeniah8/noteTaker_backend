@@ -30,7 +30,7 @@ app.route("/notes")
         res.json(database);
 })
 
-.post(function (req, res) {
+app.post("/notes", function (req, res) {
     let jsonFilePath = path.join(__dirname, "/db/db.json");
     let newNote = req.body;
 
@@ -50,6 +50,7 @@ app.route("/notes")
     //this will update the database with the note.
     //this will update the json file and write the information the user types to it
     fs.writeFile(jsonFilePath, JSON.stringify(database), function (err) {
+       
         if (err) {
             return console.log(err);
         }
