@@ -25,7 +25,7 @@ app.get('/notes', (req, res) =>
 
 
 //should reload the notes and keep them updated
-app.route("api/notes")
+app.route("/notes")
     .get(function (req, res) {
         res.json(database);
 })
@@ -35,7 +35,7 @@ app.route("api/notes")
     let newNote = req.body;
 
     //only want 99 to be the max amount of notes the user can put
-    let idLimit = 99;
+    let idLimit = 99;   
 
     //this will give the max note the same id, that way the user wouldnt be able to create more, and the limit will work
     for (let i = 0; i < database.length; i++) {
@@ -45,11 +45,11 @@ app.route("api/notes")
         }
     }
     //this will give each note an id number
-newNote.id = idLimit + 1;
+    newNote.id = idLimit + 1;
     database.push(newNote)
     //this will update the database with the note.
     //this will update the json file and write the information the user types to it
-    fs.writeFile(jsonFilePath, JSON.stringify(database), function(err) {
+    fs.writeFile(jsonFilePath, JSON.stringify(database), function (err) {
         if (err) {
             return console.log(err);
         }
