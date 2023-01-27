@@ -2,8 +2,8 @@ const express = require('express');
 const path = require('path');
 //const api = require();
 const fs = require("fs");
-const database = require("./db/db.json");
-const { randomUUID } = require('crypto');
+const notesDB = require("./db/db.json");
+const { randomUUID } = require('uuid');
 
 const PORT = process.env.PORT || 3001;
 
@@ -34,7 +34,7 @@ app.get("/", (req, res) =>
 app.route("/notes")
     .get(function (req, res) {
         res.json(database);
-})
+});
 
 //I want to give the id a random ID
 //then I want to assign that into a newNote variable
