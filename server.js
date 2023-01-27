@@ -3,7 +3,7 @@ const path = require('path');
 //const api = require();
 const fs = require("fs");
 const database = require("./db/db.json");
-const { randomUUID } = require('crypto');
+const { randomUUID } = require('uuid');
 
 const PORT = process.env.PORT || 3001;
 
@@ -23,7 +23,7 @@ app.get('/notes', (req, res) =>
     res.sendFile(path.join(__dirname, '/public/notes.html'))
 );
 
-app.get("api/notes", (req, res) => { res.json(notesDB)});
+app.get("api/notes", (req, res) => { res.json(database)});
 
 app.get("/", (req, res) =>
     res.sendFile(path.join(__dirname, '/public/index.html')) 
