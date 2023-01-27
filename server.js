@@ -2,7 +2,8 @@ const express = require('express');
 const path = require('path');
 //const api = require();
 const fs = require("fs");
-const database = require("./db/db.json")
+const database = require("./db/db.json");
+const { randomUUID } = require('crypto');
 
 const PORT = process.env.PORT || 3001;
 
@@ -22,6 +23,11 @@ app.get('/notes', (req, res) =>
     res.sendFile(path.join(__dirname, '/public/notes.html'))
 );
 
+app.get("api/notes", (req, res) => { res.json(notesDB)});
+
+app.get("/", (req, res) =>
+    res.sendFile(path.join(__dirname, '/public/index.html')) 
+);
 
 
 //should reload the notes and keep them updated
@@ -30,55 +36,31 @@ app.route("/notes")
         res.json(database);
 })
 
-app.post("/notes", function (req, res) {
-    let jsonFilePath = path.join(__dirname, "/db/db.json");
-    let newNote = req.body;
+//I want to give the id a random ID
+//then I want to assign that into a newNote variable
+//after that I am going to push the new note and rewrite the db.json file
+app.post("api/notes", function (req, res) {
+  req.body.id = randomUUID();
+  const newNote = req.body;
 
-    //only want 99 to be the max amount of notes the user can put
-    let idLimit = 99;   
+  notesDB.push(newNote);
 
-    //this will give the max note the same id, that way the user wouldnt be able to create more, and the limit will work
-    for (let i = 0; i < database.length; i++) {
-        let individualNote = database[i];
-        if (individualNote > idLimit) {
-            idLimit = individualNote.id;
-        }
-    }
-    //this will give each note an id number
-    newNote.id = idLimit + 1;
-    database.push(newNote)
-    //this will update the database with the note.
-    //this will update the json file and write the information the user types to it
-    fs.writeFile(jsonFilePath, JSON.stringify(database), function (err) {
-       
-        if (err) {
-            return console.log(err);
-        }
-        console.log("Your note has been Successfully Saved!");
-    });
-    res.json(newNote);
-});
+  fs.writeFileSync("./db/db.json", JSON.stringify(notesDB));
+  res.json(notesDB);
+
+})
 
 // delete function to delete any note
 //then the db.json file needs to be rewritten after a note has been deleted
+//going to search for the id then filter through the previous notes. The note that matched will be deleted
 app.delete("/api/notes/:id", function (req, res) {
-    let jsonFilePath = path.join (__dirname, "/db/db.json");
-    for (let i = 0; i < database.length; i++) {
-        if (database[i].id == req.params.id) {
-            database.splice(i, 1);
-        break;
+  const id = req.params.id;
 
-    }
-}
-    fs.writeFileSync(jsonFilePath, JSON.stringify(database), function (err) {
-        if (err) {
-            return console.log(err);
-        } else {
-            console.log(" Your note has been successfully deleted! ");
-        }
-    });
-    res.json(database);
-});
+  notesDB = notesDB.filter(notes => notes.id !=id);
+  fs.writeFileSync("./db/db.json", JSON.stringify(notesDB));
+  res.json(notesDB);
+})
+
 
 // GET Route for note page
 app.get('*', function (req, res) {
